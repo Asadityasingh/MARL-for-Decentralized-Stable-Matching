@@ -1,0 +1,849 @@
+﻿Multi-agent Reinforcement Learning for
+Decentralized Stable Matching
+
+Kshitija Taywade, Judy Goldsmith, and Brent Harrison
+
+University of Kentucky, Lexington, KY, USA
+kshitija.taywade@uky.edu
+
+goldsmit@cs.uky.edu
+harrison@cs.uky.edu
+
+Abstract. In the real world, people/entities usually find matches inde-
+pendently and autonomously, such as finding jobs, partners, roommates,
+etc. It is possible that this search for matches starts with no initial knowl-
+edge of the environment. We propose the use of a multi-agent reinforce-
+ment learning (MARL) paradigm for a spatially formulated decentralized
+two-sided matching market with independent and autonomous agents.
+Having autonomous agents acting independently makes our environment
+very dynamic and uncertain. Moreover, agents lack the knowledge of pref-
+erences of other agents and have to explore the environment and interact
+with other agents to discover their own preferences through noisy rewards.
+We think such a setting better approximates the real world and we study
+the usefulness of our MARL approach for it. Along with conventional
+stable matching case where agents have strictly ordered preferences, we
+check the applicability of our approach for stable matching with incom-
+plete lists and ties. We investigate our results for stability, level of insta-
+bility (for unstable results), and fairness. Our MARL approach mostly
+yields stable and fair outcomes.
+
+Keywords: Stable Matching · Multi-agent Reinforcement Learning · De-
+centralized System.
+
+1 Introduction
+
+Matching markets are prevalent in the real world, for example, matching of stu-
+dents to colleges, doctors to hospitals, employees to employers, men and women,
+etc. A two-sided market consists of two disjoint sets of agents. In a two-sided
+stable matching problem, each participant has preferences over the participants
+on the other side. A matching is stable if it does not contain a blocking pair. A
+blocking pair is formed if two agents from disjoint sets prefer each other rather
+than their current partner. Although, most of the prior literature focuses on
+centralized algorithms where the entire set of preferences is known to some cen-
+tral agency, having such a central clearinghouse is not always feasible. Therefore,
+we consider a decentralized matching market with independent and autonomous
+agents.
+
+arXiv:2005.01117v3  [cs.LG]  4 Dec 2021
+
+
+
+2 K. Taywade et al.
+
+There have been several decentralized matching methods proposed in recent
+years. However, many of them assume that the agents have knowledge of one
+another’s preferences and can easily approach/contact each other, i.e., negligible
+search friction. In reality, it takes time to meet a partner and to learn the value
+of said partnership. Furthermore, there is seldom a scope for knowing the prefer-
+ences of other agents. Also, it is a crucial task to locate and approach a potential
+match, either by navigating physically or virtually. Several decentralized match-
+ing markets, such as worker-employer markets and buyer-seller trading markets,
+consist of locations at which matching agents may meet, be it physically or online.
+The level of information, search cost, medium of interaction, and commitment
+laws can vary across markets. Nonetheless, these are the important features of
+decentralized markets. Some research works study the impact of these features
+on the final outcomes for certain types of markets [5,22,23]. To better represent
+these features, we propose a generalized matching problem in which agents are
+placed in a grid world environment and must learn to navigate it in order to
+form matches. We see this as a generalized case for matching problems. While it
+contains the features described above, it does not conform to the standards set
+by any individual market type.
+
+There are multiple factors involved in deciding a preferred match in real-
+world situations, and having a score for each match is more expressive. Thus, we
+consider weighted preferences for a stable matching problem, which is discussed
+in [8,13,24]. The weighted preference is used as the utility value (or reward)
+for being in the match. These scores reflect the underlying preference order.
+Agents are initially unaware of others’ preferences as well as of their own. In
+many matching markets, knowledge acquisition is important: in labor markets,
+employers interview workers; in matching markets, men and women date; and in
+real estate markets, buyers attend open houses. We have taken this into account,
+so an agent gets to know a noisy version of its utility for a match only after
+being part of it. Noise represents uncertainty in the value of a partnership, e.g.,
+the uncertain nature of human behavior in relationships.
+
+Finding a long-term match in this scenario is quite a complex task. There-
+fore, we propose multi-agent reinforcement learning (MARL) as an alternative
+paradigm where agents must learn how to find a match based on their experiences
+interacting with others. We equip each agent with their own reinforcement learn-
+ing (RL) module. We use SARSA, a model-free, online RL algorithm. Instead
+of a common reward signal, each agent has a separate intrinsic reward signal.
+Therefore, we model this problem as a stochastic/Markov game [17], which is
+useful in modeling multi-agent decentralized control where the reward function
+is separate for each agent. Agents learn to operate in the environment with the
+goal of increasing expected total reward, by getting into a long-term, stable, or
+close-to-stable and fair match. We impose search cost as a small negative reward
+(-1) for each step whenever an agent is not in a match.
+
+We investigate the applicability of the MARL approach to the conventional
+stable matching (SM) problem, as well as its extensions, such as stable match-
+ings with incomplete lists (SMI), where agents are allowed to declare one or
+
+
+
+MARL for Decentralized Stable Matching 3
+
+more partners unacceptable [9], and stable matching with ties (SMT), where
+agents have the same preference for more than one agent [9,12]. Moreover, we
+study both the cases of symmetric and asymmetric preferences of agents towards
+each other. Stability is one of the main measures in our investigation. We check
+whether our method yields stable results and then to which stable matching
+the method will converge if there are multiple stable matchings. As we have a
+dynamic decentralized system with agents having incomplete information, it is
+hard to guarantee stability for every instance. For unstable outcomes, we check
+instability with three measures: the degree of instability calculates the number of
+blocking agents, i.e., those agents who are part of blocking pairs [27]; the ratio of
+instability gives the proportion of blocking pairs out of all possible pairs [6]; and
+maximum dissatisfaction, which is the maximum difference between an agent’s
+current utility and their obtainable utility by being part of the blocking pair.
+Overall, we found that many of our outcomes are stable, or if not, they are close-
+to-stable. Also, it is easy to get stable outcomes for instances with symmetric
+preferences and harder for the asymmetric ones.
+
+It is important for the outcome to be fair to all the agents, as the goal of the
+agents is to increase only their own happiness. Therefore, we use three measures
+of fairness: set-equality cost, regret cost, and egalitarian cost [9]. We compare
+the fairness of our results to those of bidirectional local search, a centralized
+approach, and two decentralized approaches: Hoepman’s algorithm [11], and a
+decentralized algorithm by Comola and Fafchamps. Note that these algorithms
+solve the much easier, non-spatial problems, usually with the assumptions of
+complete information on the part of agents. Nonetheless, our approach performs
+competitively in terms of fairness. Lastly, similar to [5], we check the proportion
+of overall median stable matchings, as well as individual median matchings in
+our results, which are other important measures of fairness.
+
+2 Related Work
+
+Reinforcement Learning has not been used for the decentralized two-sided stable
+matching problem, but researchers have applied both RL and Deep RL mech-
+anisms to solve coalition formation problems. This is closest to our work as
+matching problems are a special case of coalition formation problems. In [1],
+Bachrach et al. proposed a framework for training agents to negotiate and form
+teams using deep reinforcement learning. They have also formulated the problem
+spatially. Bayesian reinforcement learning has also been used for coalition forma-
+tion problems [2,18]. Unlike most of the work in MARL approaches for coalition
+formation and task allocation, our agents cannot communicate with each other
+(although they can observe other agents in the same cell). Nonetheless, their
+utilities get affected by the actions of other agents.
+
+Researchers have studied several decentralized matching markets, and have
+proposed frameworks for modeling them and techniques for solving them, and
+have also analyzed different factors that affect the results [20,21,29,10,5,22,23,4].
+Most of these works focus on job markets. Echenique and Yariv, in their study
+
+
+
+4 K. Taywade et al.
+
+of one-to-one matching markets, proposed a decentralized approach for which
+stable outcomes are prevalent, but unlike our formulation of a problem, agents
+have complete information of everyone’s preferences [5]. Unlike our work, none
+of these works have formulated the problem spatially, and also, they have used
+different methods than RL. Some distributed algorithms for weighted matching
+include algorithms that are distributed in terms of agents acting on their own
+either synchronously or asynchronously [11,33,15]. The crucial assumption in
+these works is that agents already know their preferences over the members of
+the opposite set and can directly contact other agents to propose matches.
+
+Most of the decentralized methods mentioned here allow agents to make
+matching offers and accept/reject such offers. While in our approach, an agent
+shows interest in pairing with an agent from the other set that is present at the
+same location, by selecting a relevant action. The agent’s state space represents
+those agents from the opposite set that are present at the same cell location and
+also which ones among them are interested in pairing. Agents get matched only
+when both the agents select an action for pairing with each other. While this
+may seem similar to making, accepting, or rejecting offers, it is not exactly the
+same.
+
+3 Preliminaries
+
+Our two-sided stable matching problem consists of n agents divided equally into
+two disjoint sets S1 and S2. These agents are placed randomly on the grid with
+dimensions H × L. We investigate if agents can learn good matching policies in
+a decentralized, spatial setting.
+
+Definition 1. In the classical two-sided stable matching problem (SM),
+each agent has a strict preference order p over the members of the other set.
+Given matching M , the pair (i, j) with an agent i ∈ S1 and an agent j ∈ S2 is a
+blocking pair for M , if i prefers j and j prefers i to their respective partners in
+M . A matching is said to be stable if it does not contain any blocking pairs.
+
+The preferences are expressed as weights and hence referred to as weighted
+preferences. A weight/score represents the true utility value an agent may re-
+ceive by being in a particular match. These weights still correspond to a strict
+preference order for each agent. An agent only gets to know the utility from a
+match when it is in that particular match. Even then, it only receives a noisy
+utility value for that match rather than the true, underlying utility value. It
+can be formally written as: for i ∈ S1 and j ∈ S2, agent i receives the utility
+Uij ·C for being in a match with j, where C is the noise, sampled from a normal
+distribution with mean µ = 1 and standard deviation σ = 0.1 and Uij is the
+true utility value that agent i can get from a match with agent j. Agents still
+have a strict preference order p over the agents on the other side. Uij is picked
+uniformly from range [k, l] ∈ Z, while maintaining the strict preference order.
+
+We also consider following two extensions of the SM problem.
+
+
+
+MARL for Decentralized Stable Matching 5
+
+Definition 2. The stable matching problem with incomplete preference
+lists (SMI) may have incomplete preference lists for those involved. In this case,
+the members of the opposite set who are unacceptable to an agent simply do not
+appear in their preference list [9].
+
+As we have a score based formulation, an agent has negative scores for unac-
+ceptable agents of the other set.
+
+Definition 3. Some agents may be indifferent (i.e., have the same utility) be-
+tween two or more members of the opposite set. This is called the stable match-
+ing problem with ties (SMT) [9,12].
+
+We consider two types of preferences among agents: symmetric and asym-
+metric.
+
+For i ∈ S1 and j ∈ S2, let pi(j) (pj(i), respectively) denote the position of
+i in j’s preference list (the position of j in i’s preference list, respectively). In
+symmetric preferences, pi(j) = pj(i) (in our case, Uij = Uji as well), which
+is not guaranteed to be the case in asymmetric preferences. With asymmet-
+ric preferences (similar to random preferences in literature), there can be many
+different stable matchings in a market. However, in the case of symmetric pref-
+erences, there can be only one stable matching where each agent gets their best
+choice. Our environment is dynamic and uncertain, and also, due to the narrow
+difference between noisy utilities, it can be hard for agents to discriminate be-
+tween their choices efficiently. This can cause unstable outcomes, especially for
+asymmetric preferences. Therefore, if a stable outcome does not emerge, then
+we investigate the nature of instability with the following three measures.
+
+Definition 4. The degree of instability (DoI) of the matching is the number
+of blocking agents, i.e., the agents that belong to some blocking pair [27].
+
+Eriksson and Häggström pointed out that, rather than only looking for the
+number of blocking agents, it can also be helpful to look at the number of
+blocking partners of an agent, as it gives insight into how likely the agent will
+exploit instability [6]. Their notion of instability is defined as follows.
+
+Definition 5. For any matching M under preference structure P (m) on a set of
+(m) (m)
+
+m agents, let BP (M) denote the number of blocking pairs. Let B̂P (M) denote
+(m) (m)
+
+the proportion of blocking pairs: B̂P (M) = BP (M) / m2 [6].
+
+While Eriksson and Häggström call this measure the ‘instability’ of the match-
+ing M , we call it the ratio of instability (RoI). We also use a third measure,
+maximum dissatisfaction (MD). It is inspired by the notion of α-stability in
+[24] which is specific to SM with weighted preferences.
+
+Definition 6. In matching M , for every blocking agent x, let y be their current
+match and v be their partner in some blocking pair, then
+
+MD(M) = max{Uxv − Uxy}.
+(x,v)
+
+
+
+6 K. Taywade et al.
+
+Increase in this number may lead to exploitation of instability by agents in
+the market. Stability in the outcomes does not guarantee fairness. We consider
+three measures of fairness to check the quality of matchings as given in [9].
+
+Definition 7. The regret cost, r(M) = max max {pi(j), pj(i)}.
+(i,j)∈M
+
+∑ ∑
+
+Definition 8. The egalitarian cost, c(M) = pi(j) + pj(i).
+(i,j)∈M (i,j)∈M
+
+∑ ∑
+
+Definition 9. The set-equality cost, d(M) = pi(j) − pj(i).
+(i,j)∈M (i,j)∈M
+
+Lower values for these measures indicate better quality of the matchings. Es-
+pecially, low regret cost and set-equality cost indicate fairness among agents. It is
+well known that the Gale-Shapley algorithm provides a matching that is optimal
+for only one side, over all possible stable matchings. Thus, one notion of fairness
+is to consider the median of the set of stable matchings, so as to privilege neither
+set over the other. Thus, similar to [5], we check whether the final matchings
+are median stable matchings (MSM), and overall, what proportion of individual
+matches are median matches (MM). The well-known median property is first
+discovered by Conway [9]. A median matching exists whenever there is an odd
+number of stable outcomes. It is the matching that is in the middle of the two
+sides’ orders of preference. Thus, the median stable matching represents some
+sense of fairness as it balances the interests of both sides.
+
+Definition 10. Let P be a preference profile with the set of stable matchings
+S(P ). If K = |S(P )| is odd, the median stable matching (MSM) is a
+matching M ∈ S(P ) such that for all agents a ∈ S1 ∪ S2, M(a) occupies the
+K+1
+2 th place in a’s preference among the agents in {M ′(a)|M ′ ∈ S(P )}. M(a)
+
+is a’s median partner among a’s stable-matching partners [5]. While MSM is for
+overall matching, median match (MM) refers to individual matches between
+the agents, i.e., an individual agent being matched to its median stable match
+partner.
+
+Multi-agent Reinforcement Learning
+
+As mentioned earlier, we propose a multi-agent reinforcement learning (MARL)
+approach that enables each agent to learn independently to find a good match
+for itself. A reinforcement learning agent learns by interacting with its environ-
+ment. The agent perceives the state of the environment and takes an action,
+which causes the environment to transition into a new state at each time step.
+The agent receives a reward reflecting the quality of each transition. The agent’s
+goal is to maximize the expected cumulative reward over time [30]. In our sys-
+tem, although agents learn independently and separately, their actions affect the
+environment and in turn affect the learning process of other agents as well. As
+agents receive separate intrinsic rewards, we modeled our problem as a Markov
+game. Stochastic/Markov games [17] are used to model multi-agent decentral-
+ized control where the reward function is separate for each agent, as each agent
+works only towards maximizing its own total reward.
+
+
+
+MARL for Decentralized Stable Matching 7
+
+A Markov game with n players specifies how the state of an environment
+changes as the result of the joint actions of n players. The game has a finite
+set of states S. The observation function O : S × {1, . . . , n} → Rd specifies a d-
+dimensional view of the state space for each player. We write Oi = {oi|s ∈ S, oi =
+O(s, i)} to denote the observation space of player i. From each state, players
+take actions from the set {A1, . . . , An} (one per player). The state changes as
+a result of the joint action 〈a1, ..., an〉 ∈ 〈A1, ..., An〉, according to a stochastic
+transition function T : S × A1 × ... × An → ∆(S), where ∆(S) denotes the
+set of probability distributions over S. Each player receives an individual reward
+defined as ri : S×A1×...×An → R for player i. In our multi-agent reinforcement
+learning approach, each agent learns independently, through its own experience,
+a behavior policy πi: Oi → ∆(Ai) (denoted π(ai|oi)) based on its observation
+oi and reward ri. Each agent’s goal is to find policy πi which maximizes a long
+term discounted reward [30].
+
+4 Method
+
+We propose a MARL approach for decentralized two-sided stable matching prob-
+lems that are formulated spatially on a grid. For each agent, the starting location
+is picked uniformly randomly from the grid cells. As agents go through episodic
+training, they start in this same cell location in each episode and explore the
+environment. Agents must first find each other before they can potentially form
+matches. This approximates the spatial reality of meeting with individuals (at,
+e.g., bars or parties) or organizations (at, e.g., job fairs).
+
+We believe that finding a partner for oneself is an independent task, where
+agents do not necessarily need to compete or even co-operate. Agents only need
+to learn to find a suitable partner. Each agent independently learns a policy using
+the RL algorithm, SARSA [28,30], with a multi-layer perceptron as a function
+approximator to learn the set of Q-values. An agent’s learning is independent of
+other agents’ learning as all the agents have separate learning modules (neural
+networks). We use SARSA because it is an on-policy algorithm in which agents
+improve on the current policy. Unlike off-policy algorithms like deep Q-learning
+where agents’ behavior while learning can be erratic due to inconsistencies in
+the policy, on-policy algorithms follow the same policy and improve on it, which
+is useful when the agent’s exploratory behavior matters. In real-world matching
+markets, there is a value to the path of finding a final match. SARSA is also a
+model-free algorithm, so that agents directly learn policies, without having to
+learn the model.
+
+While exploring, agents cannot perceive any part of the environment other
+than their cell location. If an agent encounters another agent from the opposite
+set in the same cell and both the agents show interest in matching with each
+other, at the same time step, then they get matched. As agents can only view
+their current grid cell, agents can only match with one another if they are in the
+same cell. As long as agents are matched, they receive a noisy reward as a utility
+value at each time step. This noise is sampled from the normal distribution and
+
+
+
+8 K. Taywade et al.
+
+the true utility value is multiplied by this noise. Note that our environment is
+deterministic. We now describe the agents’ observation space, action space, and
+reward function.
+
+Observation space: An observation Oi for an agent i at time step t, let’s
+say Oi[t], consists of three one-hot vectors. The first one represents an agent’s
+position on the grid, the second vector represents which members of the opposite
+set are present in the current cell, and third one shows if any of those agents
+are interested in forming a match. The size of Oi is R×C +2 ·m, where R and
+C are the number of rows and columns in the grid and m is the total number
+of members of the opposite set. The size of the first hot vector is equal to the
+total number of grid cells, and the size of the second and third vector is equal
+to the size of the opposite set. Thus, an agent initially starts out knowing only
+the dimensions of the grid and the total number of agents in the opposite set.
+
+Action space: There are two types of actions available to an agent: navigating
+the grid and expressing an interest in matching with an agent from the opposite
+set. The action space is of size m + 4, where m is the size of the opposite set
+and each member has an action associated with it for showing an interest in
+matching with that member. There are 4 additional actions for navigating the
+grid by moving up, down, left, and right. There is no specific action for staying
+in the same grid cell because whenever an agent is interested in forming a match
+with another agent, it automatically stays in the same cell. When two collocated
+agents show an interest in forming a match with one another, then the match
+is considered to be formed. Note that once a match is formed, the agents must
+continue to express interest in each other at each time step in order to maintain
+the match. If at some point, one ceases to express interest, the match is dissolved.
+
+Reward Function: We have a noisy reward function described as: (1) −1 re-
+ward for not being in a match. (2) The immediate reward received by an agent i
+for a matching of agents i and j is Rij = Uij · C, where C is the noise, sampled
+from a normal distribution with mean µ = 1 and standard deviation σ = 0.1
+and Uij is the true utility value that agent i can get from a match with agent j.
+
+Agents have prior knowledge of the grid size and the total number of agents
+in the opposite set because of the way the states are constructed. However, they
+completely lack the knowledge of the weighted preferences/utility values of other
+agents. Furthermore, agents only get to know their own utility for an agent on
+the other side when they get into a match with it, and that utility value is noisy.
+In our setup, individuals may choose to be in a match until someone better comes
+along or may choose to leave a match in order to explore further and look for
+someone better. Thus, a time step in which all agents are paired is not necessarily
+stable, because agents may break off a partnership to explore, or another, more
+appealing agent may be willing to partner with them.
+
+
+
+MARL for Decentralized Stable Matching 9
+
+5 Experiments
+
+In this section, we present the ways we tested our approach on stable matching
+problems. Our main focus is on investigating the applicability of our MARL
+approach. Along with the classical stable matching case (SM), we examine how
+MARL performs on variations such as stable matching with incomplete lists
+(SMI) and ties (SMT). We consider two types of preferences among agents: sym-
+metric and asymmetric. As mentioned earlier, agents have weighted preferences
+over agents on the other side. For an agent i ∈ S1, it can be seen as the utility
+value Uij that it gets while in a match with agent j ∈ S2. In the case of SM
+and SMT problems, these weights are generated from a uniform random distri-
+bution in the range [1, 10]; for SMI, the weights are generated from a uniform
+random distribution in the range [−10, 10] (negative weights indicate how much
+one agent dislikes the other). For SM and SMI problems, the instances where
+agents have weights reflecting the strictly ordered preferences are chosen for the
+experiments. This constraint is removed while choosing SMT instances.
+
+As we formulate the problems on a grid, we investigate results for increasingly
+complex environments. This complexity is in terms of grid size and the number of
+agents. We use grid sizes 3×3, 4×4, and 5×5 in combination with 8, 10, 12, and
+14 agents as follows: (1) Grid: 3×3 ; Agents: 8; (2) Grid: 4×4 ; Agents: 8, 10, 12,
+14; (3) Grid: 5×5 ; Agents: 8, 10, 12, 14. We do not place more than 8 agents on a
+3×3 grid to keep a reasonable density of the population. We chose grid sizes such
+that agents find other agents easily accessible. This is motivated by real-world
+places like bars, parties, job fairs, etc. We think that our choices of grid size and
+number of agents are sufficient to get the essence of realistic situations. Starting
+cell locations of agents are chosen uniformly randomly from the grid cells, and
+agents are placed back to these locations at the start of each episode. We run
+experiments for every possible combination of matching problem variation (SM,
+SMI, and SMT), preference type (symmetric and asymmetric), grid size, and
+total agents. We implement 10 different instances of each of these combinations.
+Each instance is generated by assigning weights between the agents uniformly
+randomly while still maintaining the preference order if needed.
+
+Parameter Settings: Each agent independently learns a policy using SARSA
+[28,30] with a multi-layer perceptron as a function approximator to learn a set of
+Q-values. Each network consists of 2 hidden layers with 50 and 25 hidden units,
+respectively. We trained models using the Adam optimizer [16] with learning rate
+10−4 to minimize TD-control loss. We used discount factor, γ = 0.9. We have
+combined SARSA with experience replay for better results. The use of experience
+replay along with SARSA has been proposed by Zhao et al. [34]. As SARSA is
+an on-policy algorithm, we only used data from recent (last 10) episodes in our
+experience replay buffer, which increased our performance over not using a replay
+buffer. The number of training episodes and steps varies based on grid-size and
+the total number of agents in an instance. The number of steps per episode
+varies between 300–700 and training can take between 100k to 400k episodes to
+converge. When there are multiple suitable matches available in the environment
+
+
+
+10 K. Taywade et al.
+
+for an agent, a proper exploration strategy is needed to find the best among them.
+Therefore, we used exploration rate with non-linear decay, such that it is high
+in the beginning but decays later (with a minimum exploration rate, ǫ = 0.05).
+Learning rate and discount factor are fine tuned as the outcomes are slightly
+sensitive to these hyper-parameters; however, results are robust to the changes
+in other hyper-parameters.
+
+We investigate stability and fairness of the outcomes. Roth hypothesized that
+the success of a centralized labor market depends on whether the matchmaking
+mechanism generates a stable matching [26]. Although we have decentralized
+matching market, we think that stability is still an important measure of the
+success. For the SM problem, stable matchings always exist, and for the SMI and
+SMT problems, at least a weakly stable matching exists [14]. In weak stability,
+
+( )
+
+a blocking pair is defined as i, j such that M(i) 6= j, j ≻i M(i), and i ≻j
+
+M(j) [14]. Note that in SMI instances, agents can end up without a partner as
+incomplete lists make some potential matches unacceptable.
+
+As we have a dynamic and uncertain environment and agents with incom-
+plete knowledge, there is a scope for the rise of instability. Economic experi-
+ments on decentralized matching markets with incomplete information [31,19]
+have yielded outcomes with considerable instability. We use three more mea-
+sures to study instability: the degree of instability (DoI), the ratio of instability
+(RoI), and maximum dissatisfaction (MD) (details in Preliminaries). Stable or
+close-to-stable solutions do not guarantee fairness, specifically for asymmetric
+preference cases. As agents are independent and autonomous, we need to check
+the efficacy of our approach from an individual agent’s point of view. Therefore,
+we use three fairness measures: set-equality cost, regret cost, and egalitarian cost.
+Additionally, we check the proportion of both median stable matchings as well as
+individual median matches. We compare our results with both centralized and
+decentralized algorithms. The comparison baselines are detailed below.
+Bidirectional Local Search Algorithm (BLS) [32] is a centralized local
+search algorithm for stable matching with set-equality. It uses the Gale-Shapley
+algorithm [7] to compute S1-optimal and S2-optimal stable matchings and exe-
+cutes bi-directional search from those matchings until the search frontiers meet.
+Hoepman’s Algorithm (HA) [11] is a variant of the sequential greedy algo-
+rithm [25] which computes a weighted matching at most a factor of two away
+from the maximum. It is a distributed algorithm in which agents asynchronously
+message each other.
+Decentralized Algorithm by Comola and Fafchamps (D-CF) [3] is de-
+signed to compute a matching in a decentralized market with deferred acceptance.
+Deferred acceptance means an agent can be paired with several other partners in
+the process of reaching their final match. This algorithm includes a sequence of
+rounds in which agents take turns in making proposals to other agents, who can
+accept or reject them. While Comola and Fafchamps focused on many-to-many
+matching, the method can be easily adapted for one-to-one matching.
+
+Note that not only BLS but also HA and D-CF are non-spatial algorithms
+where agents already have knowledge of every other agent present in the system.
+
+
+
+MARL for Decentralized Stable Matching 11
+
+This gives them a significant advantage over the agents in our system, both be-
+cause the agents know whom they prefer and because they have instantaneous
+contact, rather than having to wander around in a grid world. Both of the de-
+centralized algorithms use randomness while forming their final matching, giving
+different results each time. Therefore, we run each instance 5 times and compare
+to the average of those runs. We also run our MARL approach 5 times for each
+instance. We discovered that if a stable outcome is found, the same one is found
+consistently, but if not, then the outcomes vary.
+
+6 Results and Discussion
+
+We evaluate the results for stability, as well as the level of instability for unstable
+outcomes. We use three measures to evaluate instability: the degree of instabil-
+ity (DoI), the ratio of instability (RoI), and maximum dissatisfaction (MD). As
+fairness in the outcomes is also important, we use three fairness measures: set-
+equality cost, regret cost, and egalitarian cost. In addition to this, we check what
+percent of the stable matchings are median stable matchings, as well as what
+percent of the individual matches are median matches. Results for SM and SMT
+problems with symmetric preferences and for SMI problem with both symmetric
+and asymmetric preferences are straightforward, therefore, are mentioned in the
+text. However, the results for SM and SMT problems with asymmetric prefer-
+ences needed more analysis. We elaborate on the results of SM problem with
+asymmetric preferences in Tables 1–3, as we think that this is the most relevant
+and adverse case. Due to lack of space, we omitted the similar analysis of the
+results for the SMT-asymmetric case; however, those results are very similar to
+the ones presented for the SM-asymmetric case.
+
+Grid 3× 3 4× 4 5× 5
+Agents 8 8 10 12 14 8 10 12 14
+Stability(%)100 92.0 82.0 68.0 56.0 80.0 74.0 54.0 46.0
+DoI 0 2± 0.0 2± 0.0 3.3 ± 3.2 ± 2± 0.0 2.5 ± 2.8 ± 3.5 ±
+
+1.3 1.7 1.1 0.9 1.6
+RoI 0 0.04 ± 0.04 ± 0.06 ± 0.07 ± 0.04 ± 0.04 ± 0.05 ± 0.07 ±
+
+0.0 0.0 0.01 0.02 0.0 0.01 0.02 0.03
+MD 0 1.75 ± 2.89 ± 3.13 ± 3.89 ± 2.33 ± 2.77 ± 3.25 ± 4.44 ±
+
+0.9 1.7 1.9 1.8 1.5 1.4 1.9 2.3
+MM(%) 83.1 73.2 65.3 63.4 52.4 75.0 67.1 58.9 48.7
+
+Table 1. For SM (asymmetric) case, MARL results on stability (%), instability mea-
+sures (Avg ± Std) and median matches (%).
+
+Many of our outcomes are stable or close-to-stable. For SM problem with
+symmetric preferences, there is only one possible stable matching, and all the
+outcomes converge to that. However, for asymmetric preferences, more than one
+
+
+
+12 K. Taywade et al.
+
+stable matching is possible. The instances with symmetric preferences converge
+faster than the asymmetric ones. The instances of SM and SMT with asym-
+metric preferences take longer to converge, with lower rates of convergence to
+stability. The results of SM and SMT are similar. Additionally, for SM asym-
+metric instances, we have observed that the agents disliked by everyone in the
+opposite set (low utility associated with them by everyone) find it difficult to
+get a long-term match. Similarly, unsurprisingly, the most-liked agent (high util-
+ity associated with them by everyone) easily settles with its ideal match. We
+also noticed that the noise in utilities adversely affects convergence to stable
+outcomes.
+
+When it comes to SMI, our results are always stable. The number of agents
+that are matched is the maximum possible. This is important because when
+agents have incomplete lists (negative utilities for matches), it is hard to get a
+match for everyone, even though it is easier for some agents to find stable partner
+due to fewer choices. Here, the final outcome always has the lowest regret cost.
+Importantly, between the agents in the matched pair, there can be an agent
+having zero utility towards its match, while the other agent still has positive
+utility for the same match. As the agent with positive utility tries to get in a
+match, having noise in the reward causes the agent with zero utility to stick to
+the match. Note that this does not happen when both the agents in the match
+have zero utility for the match, as neither of them tries to stick with the match.
+
+Set-equality Cost; d(M) Regret Cost; r(M)
+N MARL MARL MARL MARL
+
+(4× 4) (5× 5) BLS HA D-CF (4× 4) (5× 5) BLS HA D-CF
+8 3.1 ± 3.9 ± 2.9 ± 2.6 ± 3.1 ± 3.6 ± 3.5 ± 3.5 ± 3.7 ± 3.5 ±
+
+2.4 2.5 2.1 1.8 1.7 0.8 0.8 0.8 0.7 0.8
+10 2.9 ± 3.2 ± 3±2.8 3.5 ± 4±2.7 4.3 ± 4.1 ± 4±0.8 4.6 ± 4.2 ±
+
+2.1 2.8 1.6 0.8 0.7 0.5 0.9
+12 4.6 ± 6.6 ± 5±4.2 4±4.2 4±4.2 5.4 ± 5.3 ± 5.1 ± 5.3 ± 5.1 ±
+
+3.5 3.8 0.8 0.9 0.9 1.1 0.9
+14 7± 9.2 7.4 ± 7.5 ± 7.2 ± 7.5 ± 6.7 ± 5.9 ± 5.7 ± 5.6 ± 5.7 ±
+
+7.7 4.9 4.4 4.9 0.7 1.3 1.1 1.0 1.1
+Table 2. For SM (asymmetric) case, comparison of set-equality cost and regret cost
+in (Avg ± Std) format; results for 8 agents on 3 × 3 grid not included due to limited
+space.
+
+From Table 1, which elaborates on the results of the SM-asymmetric case,
+we can see that the curse of dimensionality in how the number of agents affects
+stability. Although the grid size also affects stability, its impact is much less. Both
+of these factors affect the convergence rate as well: more complex environments
+take longer to converge. The environment with 8 agents on a 3 × 3 grid is the
+easiest one for training agents, and 100% of the outcomes are stable, while the
+one with 14 agents on a 5 × 5 grid is the hardest to train and the stability of
+
+
+
+MARL for Decentralized Stable Matching 13
+
+Egalitarian Cost; c(M)
+N MARL MARL
+
+(4× 4) (5× 5) BLS HA D-CF
+8 15.3 ± 2.8 15.1± 2.3 15.5 ± 2.7 16.6± 2.8 15.5 ± 2.7
+10 20.3 ± 2.7 20.4± 3.4 19.8 ± 2.8 25.1± 3.7 20.4 ± 2.9
+12 31± 5.9 28.4± 4.6 27.6 ± 3.4 32.6± 5.1 27.8 ± 3.3
+14 41.4 ± 6.1 39.4± 5.6 34.9 ± 3.5 41.2± 6.9 34.9 ± 3.5
+
+Table 3. For SM (asymmetric) case, comparison of egalitarian cost in (Avg ± Std)
+format.
+
+the final outcomes declined significantly to 46%. Nonetheless, we can also see
+from the measures of instability that the outcomes are close-to-stable. Note that
+in Table 1 the values associated with these measures are averaged over only
+unstable outcomes. The average number of blocking agents (DoI) is low in all
+cases. We also checked the proportion of blocking pairs (RoI), as the greater
+this number, the more likely that blocking agents will discover and exploit the
+instability at some point [6]. Our approach does well for this measure. This
+follows the suggestion by Eriksson and Häggström that if agents increase the
+search effort rather than picking random partners, then we can expect outcomes
+to have a very small proportion of blocking pairs [6].
+
+Furthermore, we look at the maximum dissatisfaction (MD) that an agent
+can have for an outcome, as great dissatisfaction may also lead to exploiting
+instability. This number is also low, which assures that there is a low likelihood
+of blocking agents exploiting unstable outcomes in the market. We think that the
+dynamic and uncertain environment, incomplete information, noisy utilities, and
+the narrow differences in the utilities between matches found for an individual
+over different episodes are potential reasons behind the emergence of instability
+in the outcomes. Especially in the case of asymmetric preferences, it is unlikely
+that an agent’s ideal partner also best prefers that agent.
+
+In Tables 2 and 3, we compare fairness in the outcomes with three other
+algorithms. Here, we can see that MARL performs competitively, and there is
+no significant difference between the fairness results. The regret cost of MARL
+is slightly, but not significantly, higher for all the types of instances. Hoepman’s
+algorithm (HA) and the decentralized algorithm by Comola and Fafchamps (D-
+CF) are decentralized approaches. While D-CF always produces stable outcomes,
+that may not be the case with HA. Our approach performed better than HA
+in almost all the cases and very similarly to the D-CF algorithm. Again, our
+approach performs well despite being implemented on a fundamentally more
+complex formulation of the problem than the ones for HA and D-CF. Further,
+when our outcomes are stable, they usually match with those found by BLS.
+It shows that despite the decentralization, our MARL approach is capable of
+producing outcomes as good as those found by a central agency. This is further
+supported by the fact that the good proportion of individual matches are median
+matches (shown in Table 1). Also, approximately half of the stable matchings are
+median stable matchings. We think that the fairness is achieved because agents
+
+
+
+14 K. Taywade et al.
+
+are self-interested and independent, and the stability is achieved as agents learn
+to find their best viable matches.
+
+The learned policies include agents moving to a fixed location from their
+starting point and getting into a match corresponding to the final outcome.
+It is possible that more than one pair is formed at the same location, but it
+is rare. The location where agents in a pair move to form the match is not
+necessarily the mid-point of the distance between starting points of two agents,
+nor is it guaranteed to be close to either starting point. Centralized algorithms
+do not work on a grid; they produce matchings but not the learned policies. This
+shows that the real-world entities can benefit from using our MARL approach
+to learn to efficiently navigate the environment in finding and maintaining the
+good match.
+
+7 Conclusion and Future Work
+
+We have shown that the MARL paradigm can be successfully used for decentral-
+ized stable matching problems that are formulated spatially in a dynamic and
+uncertain environment, with independent and autonomous agents having min-
+imum initial knowledge. Our MARL approach is also applicable for variations
+such as SM with incomplete lists and ties. Agents tend to be happy with their
+final matches, as outcomes are stable or close-to-stable and fair for everyone.
+Even with unstable outcomes, agents are less likely to exploit instability. In fu-
+ture work, we plan to work on bigger instances, environments where agents can
+arbitrarily enter and exit the matching market, and investigate environments
+where a few agents can learn while others have a fixed policy.
+
+References
+
+1. Bachrach, Y., Everett, R., Hughes, E., Lazaridou, A., Leibo, J., Lanctot, M., Jo-
+hanson, M., Czarnecki, W., Graepel, T.: Negotiating team formation using deep
+reinforcement learning (2018)
+
+2. Chalkiadakis, G., Boutilier, C.: Bayesian reinforcement learning for coalition for-
+mation under uncertainty. In: Proc. AAMAS ’04. pp. 1090–1097 (2004)
+
+3. Comola, M., Fafchamps, M.: An experimental study on decentralized networked
+markets. Journal of Economic Behavior & Organization 145, 567–591 (2018)
+
+4. Diamantoudi, E., Miyagawa, E., Xue, L.: Decentralized matching: The role of com-
+mitment. Games and Economic Behavior 92, 1–17 (2015)
+
+5. Echenique, F., Yariv, L.: An experimental study of decentralized matching (2012)
+6. Eriksson, K., Häggström, O.: Instability of matchings in decentralized markets
+
+with various preference structures. International Journal of Game Theory 36(3-4),
+409–420 (2008)
+
+7. Gale, D., Shapley, L.S.: College admissions and the stability of marriage. The
+American Mathematical Monthly 69(1), 9–15 (1962)
+
+8. Gusfield, D.: Three fast algorithms for four problems in stable marriage. SIAM
+Journal on Computing 16(1), 111–128 (1987)
+
+9. Gusfield, D., Irving, R.W.: The stable marriage problem: structure and algorithms.
+MIT press (1989)
+
+
+
+MARL for Decentralized Stable Matching 15
+
+10. Haeringer, G., Wooders, M.: Decentralized job matching. International Journal of
+Game Theory 40(1), 1–28 (2011)
+
+11. Hoepman, J.H.: Simple distributed weighted matchings. arXiv cs/0410047 (2004)
+12. Irving, R.W.: Stable marriage and indifference. Discrete Applied Mathematics
+
+48(3), 261–272 (1994)
+13. Irving, R.W., Leather, P., Gusfield, D.: An efficient algorithm for the “optimal”
+
+stable marriage. Journal of the ACM (JACM) 34(3), 532–543 (1987)
+14. Iwama, K., Miyazaki, S.: A survey of the stable marriage problem and its vari-
+
+ants. In: International Conference on Informatics Education and Research for
+Knowledge-Circulating Society. pp. 131–136. IEEE Computer Society (Jan 2008)
+
+15. Khan, A., Pothen, A., Mostofa Ali Patwary, M., Satish, N.R., Sundaram, N.,
+Manne, F., Halappanavar, M., Dubey, P.: Efficient approximation algorithms for
+weighted b-matching. SIAM Journal on Scientific Computing 38(5), S593–S619
+(2016)
+
+16. Kingma, D.P., Ba, J.: Adam: A method for stochastic optimization. arXiv preprint
+arXiv:1412.6980 (2014)
+
+17. Littman, M.L.: Markov games as a framework for multi-agent reinforcement learn-
+ing. In: Machine learning proceedings 1994, pp. 157–163. Elsevier (1994)
+
+18. Matthews, T., Ramchurn, S.D., Chalkiadakis, G.: Competing with humans at fan-
+tasy football: Team formation in large partially-observable domains. In: Twenty-
+Sixth AAAI Conference on Artificial Intelligence. aaai.org (2012)
+
+19. Niederle, M., Roth, A.E.: Making markets thick: How norms governing exploding
+offers affect market performance. preprint (2006)
+
+20. Niederle, M., Yariv, L.: Matching through decentralized markets. Discussion Paper,
+Stanford University (2007)
+
+21. Niederle, M., Yariv, L.: Decentralized matching with aligned preferences. Tech.
+rep., National Bureau of Economic Research (2009)
+
+22. Pais, J., Pintér, A., Veszteg, R.F.: Decentralized matching markets: a laboratory
+experiment (2012)
+
+23. Pais, J., Pintér, Á., Veszteg, R.F.: Decentralized matching markets with (out) fric-
+tions: a laboratory experiment. Experimental Economics pp. 1–28 (2017)
+
+24. Pini, M.S., Rossi, F., Venable, K.B., Walsh, T.: Stability and optimality in match-
+ing problems with weighted preferences. In: Agents and Artificial Intelligence. pp.
+319–333. Springer Berlin Heidelberg (2013)
+
+25. Preis, R.: Linear time 1/2-approximation algorithm for maximum weighted match-
+ing in general graphs. In: STACS 99. pp. 259–269. Springer Berlin Heidelberg
+(1999)
+
+26. Roth, A.E.: A natural experiment in the organization of entry-level labor markets:
+regional markets for new physicians and surgeons in the United Kingdom. The
+American Economic Review pp. 415–440 (1991)
+
+27. Roth, A.E., Xing, X.: Turnaround time and bottlenecks in market clearing: De-
+centralized matching in the market for clinical psychologists. Journal of political
+Economy 105(2), 284–329 (1997)
+
+28. Rummery, G.A., Niranjan, M.: On-line Q-learning using connectionist systems,
+vol. 37. University of Cambridge, Department of Engineering England (1994)
+
+29. Satterthwaite, M., Shneyerov, A.: Dynamic matching, two-sided incomplete infor-
+mation, and participation costs: Existence and convergence to perfect competition.
+Econometrica 75(1), 155–200 (2007)
+
+30. Sutton, R.S., Barto, A.G.: Reinforcement learning: An introduction. MIT press
+(2018)
+
+
+
+16 K. Taywade et al.
+
+31. Ünver, M.U.: On the survival of some unstable two-sided matching mechanisms.
+International Journal of Game Theory 33(2), 239–254 (2005)
+
+32. Viet, H.H., Trang, L.H., Lee, S., Chung, T.: A bidirectional local search for the sta-
+ble marriage problem. In: 2016 International Conference on Advanced Computing
+and Applications (ACOMP). pp. 18–24. ieeexplore.ieee.org (Nov 2016)
+
+33. Wattenhofer, M., Wattenhofer, R.: Distributed weighted matching. In: Distributed
+Computing. pp. 335–348. Springer Berlin Heidelberg (2004)
+
+34. Zhao, D., Wang, H., Shao, K., Zhu, Y.: Deep reinforcement learning with experi-
+ence replay based on SARSA. In: 2016 IEEE Symposium Series on Computational
+Intelligence (SSCI). pp. 1–6. IEEE (2016)

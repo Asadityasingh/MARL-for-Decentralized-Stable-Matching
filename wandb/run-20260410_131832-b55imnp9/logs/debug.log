@@ -1,0 +1,61 @@
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_setup.py:_flush():81] Current SDK version is 0.25.1
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_setup.py:_flush():81] Configure stats pid to 83735
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /Users/adityasingh/Documents/MARL/Stable_matching/wandb/run-20260410_131832-b55imnp9/logs/debug.log
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /Users/adityasingh/Documents/MARL/Stable_matching/wandb/run-20260410_131832-b55imnp9/logs/debug-internal.log
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_init.py:init():844] calling init triggers
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'name': 'validate_3x3_8agents_SM_sym', 'grid_size': [3, 3], 'n_agents': 8, 'problem_type': 'SM', 'symmetric': True, 'n_episodes': 100000, 'steps_per_episode': 300, 'n_instances': 2, 'n_runs': 2, 'lr': 0.0001, 'gamma': 0.9, 'epsilon_start': 1.0, 'epsilon_min': 0.05, 'epsilon_decay': 0.9999625540476977, 'batch_size': 32, 'replay_buffer_size': 10, '_wandb': {}}
+2026-04-10 13:18:32,895 INFO    MainThread:83735 [wandb_init.py:init():892] starting backend
+2026-04-10 13:18:33,124 INFO    MainThread:83735 [wandb_init.py:init():895] sending inform_init request
+2026-04-10 13:18:33,155 INFO    MainThread:83735 [wandb_init.py:init():903] backend started and connected
+2026-04-10 13:18:33,174 INFO    MainThread:83735 [wandb_init.py:init():973] updated telemetry
+2026-04-10 13:18:33,175 INFO    MainThread:83735 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-04-10 13:18:34,382 INFO    MainThread:83735 [wandb_init.py:init():1042] starting run threads in backend
+2026-04-10 13:18:34,444 INFO    MainThread:83735 [wandb_run.py:_console_start():2524] atexit reg
+2026-04-10 13:18:34,444 INFO    MainThread:83735 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-04-10 13:18:34,444 INFO    MainThread:83735 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-04-10 13:18:34,444 INFO    MainThread:83735 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-04-10 13:18:34,447 INFO    MainThread:83735 [wandb_init.py:init():1082] run started, returning control to user process
+2026-04-10 22:53:38,951 INFO    MainThread:83735 [wandb_run.py:_finish():2291] finishing run ns26z139-iit-madras/marl-stable-matching/b55imnp9
+2026-04-10 22:53:38,953 INFO    MainThread:83735 [wandb_run.py:_atexit_cleanup():2490] got exitcode: 0
+2026-04-10 22:53:38,953 INFO    MainThread:83735 [wandb_run.py:_restore():2472] restore
+2026-04-10 22:53:38,953 INFO    MainThread:83735 [wandb_run.py:_restore():2478] restore done
+2026-04-10 23:09:57,935 INFO    MainThread:83735 [wandb_run.py:_footer_sync_info():3868] logging synced files
+2026-04-10 23:09:57,944 ERROR   MainThread:83735 [wandb_init.py:init():1593] [no run ID] error in wandb.init()
+Traceback (most recent call last):
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_init.py", line 1578, in init
+    run = wi.init(run_settings, run_config, run_printer)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_init.py", line 865, in init
+    self._wl.finish_all_active_runs()
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_setup.py", line 166, in finish_all_active_runs
+    run.finish()
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 399, in wrapper
+    return func(self, *args, **kwargs)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 444, in wrapper
+    return func(self, *args, **kwargs)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 2279, in finish
+    return self._finish(exit_code)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 399, in wrapper
+    return func(self, *args, **kwargs)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 2307, in _finish
+    self._atexit_cleanup(exit_code=exit_code)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 2514, in _atexit_cleanup
+    Run._footer(
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 3826, in _footer
+    Run._footer_sync_info(
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/wandb_run.py", line 3874, in _footer_sync_info
+    printer.display(info)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/lib/printer.py", line 315, in display
+    self._display_fn_mapping(level)(text)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/errors/term.py", line 217, in termlog
+    _log(
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/errors/term.py", line 520, in _log
+    click.echo(string, file=sys.stderr, nl=newline)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/click/utils.py", line 318, in echo
+    file.write(out)  # type: ignore
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/venv/lib/python3.9/site-packages/wandb/sdk/lib/console_capture.py", line 184, in write_with_callbacks
+    n = orig_write(s)
+BrokenPipeError: [Errno 32] Broken pipe
+2026-04-10 23:09:58,089 INFO    wandb-AsyncioManager-main:83735 [service_client.py:_forward_responses():134] Reached EOF.
+2026-04-10 23:09:58,089 INFO    wandb-AsyncioManager-main:83735 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.

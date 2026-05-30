@@ -1,0 +1,5 @@
+2026-04-10 22:53:38,950 INFO    MainThread:83735 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /Users/adityasingh/Documents/MARL/Stable_matching/wandb/run-20260410_225338-z39cnary/logs/debug.log
+2026-04-10 22:53:38,951 INFO    MainThread:83735 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /Users/adityasingh/Documents/MARL/Stable_matching/wandb/run-20260410_225338-z39cnary/logs/debug-internal.log
+2026-04-10 22:53:38,951 INFO    MainThread:83735 [wandb_init.py:init():844] calling init triggers
+2026-04-10 22:53:38,951 INFO    MainThread:83735 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'name': 'validate_3x3_8agents_SM_sym', 'grid_size': [3, 3], 'n_agents': 8, 'problem_type': 'SM', 'symmetric': True, 'n_episodes': 100000, 'steps_per_episode': 300, 'n_instances': 2, 'n_runs': 2, 'lr': 0.0001, 'gamma': 0.9, 'epsilon_start': 1.0, 'epsilon_min': 0.05, 'epsilon_decay': 0.9999625540476977, 'batch_size': 32, 'replay_buffer_size': 10, '_wandb': {}}

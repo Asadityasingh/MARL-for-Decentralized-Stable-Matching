@@ -1,0 +1,55 @@
+wandb: Detected [agents] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+  Ep      0/100000 | Reward:  -0.963 | Matched: 1/8 | ε: 1.0000
+  Ep   1000/100000 | Reward:  -0.915 | Matched: 0/8 | ε: 0.9632
+  Ep   2000/100000 | Reward:  -0.951 | Matched: 0/8 | ε: 0.9278
+  Ep   3000/100000 | Reward:  -0.924 | Matched: 0/8 | ε: 0.8937
+  Ep   4000/100000 | Reward:  -0.881 | Matched: 0/8 | ε: 0.8609
+  Ep   5000/100000 | Reward:  -0.890 | Matched: 0/8 | ε: 0.8292
+  Ep   6000/100000 | Reward:  -0.894 | Matched: 0/8 | ε: 0.7987
+  Ep   7000/100000 | Reward:  -0.809 | Matched: 0/8 | ε: 0.7694
+wandb: WARNING Fatal error while uploading data. Some run data will not be synced, but it will still be written to disk. Use `wandb sync` at the end of the run to try uploading.
+  Ep   8000/100000 | Reward:  -0.764 | Matched: 0/8 | ε: 0.7411
+  Ep   9000/100000 | Reward:  -0.755 | Matched: 1/8 | ε: 0.7139
+  Ep  10000/100000 | Reward:  -0.662 | Matched: 0/8 | ε: 0.6876
+  Ep  11000/100000 | Reward:  -0.636 | Matched: 1/8 | ε: 0.6624
+  Ep  12000/100000 | Reward:  -0.343 | Matched: 0/8 | ε: 0.6380
+  Ep  13000/100000 | Reward:  -0.126 | Matched: 0/8 | ε: 0.6146
+  Ep  14000/100000 | Reward:   0.073 | Matched: 1/8 | ε: 0.5920
+  Ep  15000/100000 | Reward:   0.281 | Matched: 1/8 | ε: 0.5702
+  Ep  16000/100000 | Reward:   0.330 | Matched: 1/8 | ε: 0.5493
+  Ep  17000/100000 | Reward:   0.567 | Matched: 1/8 | ε: 0.5291
+  Ep  18000/100000 | Reward:   0.824 | Matched: 2/8 | ε: 0.5096
+  Ep  19000/100000 | Reward:   1.237 | Matched: 2/8 | ε: 0.4909
+  Ep  20000/100000 | Reward:   1.379 | Matched: 2/8 | ε: 0.4729
+  Ep  21000/100000 | Reward:   1.450 | Matched: 3/8 | ε: 0.4555
+  Ep  22000/100000 | Reward:   1.438 | Matched: 1/8 | ε: 0.4387
+  Ep  23000/100000 | Reward:   1.692 | Matched: 0/8 | ε: 0.4226
+  Ep  24000/100000 | Reward:   1.833 | Matched: 2/8 | ε: 0.4071
+  Ep  25000/100000 | Reward:   1.994 | Matched: 1/8 | ε: 0.3921
+  Ep  26000/100000 | Reward:   2.398 | Matched: 3/8 | ε: 0.3777
+  Ep  27000/100000 | Reward:   2.478 | Matched: 2/8 | ε: 0.3638
+  Ep  28000/100000 | Reward:   2.853 | Matched: 2/8 | ε: 0.3504
+  Ep  29000/100000 | Reward:   2.988 | Matched: 5/8 | ε: 0.3376
+  Ep  30000/100000 | Reward:   2.908 | Matched: 1/8 | ε: 0.3252
+  ERROR instance=0 run=0: [Errno 2] No such file or directory: 'results/validate_3x3_8agents_SM_sym/instance_0_run_0/checkpoint_30000'
+Traceback (most recent call last):
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/project/experiments/runner.py", line 197, in run_experiment_config
+    result = self.run_single_experiment(config, instance_id, run_id, save_dir)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/project/experiments/runner.py", line 115, in run_single_experiment
+    training_stats = trainer.train(save_dir=str(exp_save_dir))
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/project/training/trainer.py", line 106, in train
+    self._save_checkpoint(save_path, episode)
+  File "/Users/adityasingh/Documents/MARL/Stable_matching/project/training/trainer.py", line 173, in _save_checkpoint
+    ckpt_dir.mkdir(exist_ok=True)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1313, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: 'results/validate_3x3_8agents_SM_sym/instance_0_run_0/checkpoint_30000'
+
+============================================================
+  validate_3x3_8agents_SM_sym_i0_r1
+  Episodes: 100000 | Steps: 300
+  lr=0.0001 | γ=0.9 | ε_decay=0.999963
+============================================================
+wandb: Finishing previous runs because reinit is set to True.

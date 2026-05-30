@@ -1,0 +1,29 @@
+{
+  "os": "macOS-26.3.1-arm64-arm-64bit",
+  "python": "CPython 3.9.6",
+  "startedAt": "2026-04-10T07:48:32.893156Z",
+  "args": [
+    "--mode",
+    "validate"
+  ],
+  "program": "/Users/adityasingh/Documents/MARL/Stable_matching/main.py",
+  "codePath": "main.py",
+  "codePathLocal": "main.py",
+  "email": "ns26z139@smail.iitm.ac.in",
+  "root": "/Users/adityasingh/Documents/MARL/Stable_matching",
+  "host": "systemadministrators-Mac-mini-2.local",
+  "executable": "/Users/adityasingh/Documents/MARL/Stable_matching/venv/bin/python3",
+  "cpu_count": 10,
+  "cpu_count_logical": 10,
+  "disk": {
+    "/": {
+      "total": "245107195904",
+      "used": "132509536256"
+    }
+  },
+  "memory": {
+    "total": "17179869184"
+  },
+  "apple": {},
+  "writerId": "jaxawdpd9ulra9iv8sa0onhl9fei6dvj"
+}
