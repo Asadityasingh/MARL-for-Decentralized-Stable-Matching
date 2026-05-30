@@ -281,4 +281,5 @@ results/
 ## Authors
 
 Implementation: Aditya Singh (ns26z139), IIT Madras
+
 Original Paper: Kshitija Taywade, Judy Goldsmith, Brent Harrison — University of Kentucky
